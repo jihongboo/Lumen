@@ -10,6 +10,9 @@ import SwiftUI
 struct HomePage: View {
     @State private var selectedPage = HomeDisplayPage.liquidGlassTime
     @State private var isSwitchingPage = false
+    @FocusState private var isPlayerButtonFocused: Bool
+    @FocusState private var isSwitcherButtonFocused: Bool
+    @FocusState private var focusedSwitcherPage: HomeDisplayPage?
 
     var body: some View {
         GeometryReader { proxy in
@@ -21,6 +24,7 @@ struct HomePage: View {
             .overlay(alignment: .topTrailing) {
                 HStack(spacing: 8) {
                     HomePlayerButton()
+                        .focused($isPlayerButtonFocused)
                     
                     Button(isSwitchingPage ? "完成页面切换" : "切换页面", systemImage: isSwitchingPage ? "checkmark" : "rectangle.stack") {
                         withAnimation(.smooth) {
@@ -29,18 +33,43 @@ struct HomePage: View {
                     }
                     .labelStyle(.iconOnly)
                     .buttonStyle(.glass)
+                    .focused($isSwitcherButtonFocused)
+                    .tvOSMoveDownCommand {
+                        if isSwitchingPage {
+                            focusedSwitcherPage = selectedPage
+                        }
+                    }
                     .padding()
                 }
             }
             .overlay {
                 if isSwitchingPage {
-                    HomePageSwitcherFooter(selectedPage: $selectedPage)
+                    HomePageSwitcherFooter(
+                        selectedPage: $selectedPage,
+                        focusedPage: $focusedSwitcherPage,
+                        isSwitcherButtonFocused: $isSwitcherButtonFocused
+                    )
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
         }
         .preferredColorScheme(.dark)
         .ignoresSafeArea()
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func tvOSMoveDownCommand(_ action: @escaping () -> Void) -> some View {
+        #if os(tvOS)
+        onMoveCommand { direction in
+            if direction == .down {
+                action()
+            }
+        }
+        #else
+        self
+        #endif
     }
 }
 

@@ -25,8 +25,16 @@ struct HomePageCarousel: View {
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
         .scaleEffect(isSwitchingPage ? 0.7 : 1)
-        .allowsHitTesting(isSwitchingPage)
+        .allowsHitTesting(allowsPageInteraction)
         .animation(.smooth, value: isSwitchingPage)
+    }
+
+    private var allowsPageInteraction: Bool {
+        #if os(tvOS)
+        !isSwitchingPage
+        #else
+        isSwitchingPage
+        #endif
     }
 }
 
