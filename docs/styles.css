@@ -181,17 +181,167 @@ h3 {
 }
 
 .hero-visual {
+  position: relative;
+  padding: 1.5%;
+  border-radius: 12px;
+  background: #1a1a1a; /* TV Bezel */
+  box-shadow: 
+    0 0 0 2px #333,
+    0 30px 60px -12px rgba(0,0,0,0.5),
+    0 18px 36px -18px rgba(0,0,0,0.5);
+}
+
+/* TV Screen area */
+.tv-screen {
+  position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.68);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.44);
-  box-shadow: var(--shadow);
+  border-radius: 4px;
+  background: #000;
+  aspect-ratio: 16 / 9;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.2);
 }
 
 .hero-visual img {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
   object-fit: cover;
+}
+
+/* TV Stand/Bottom details */
+.hero-visual::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12%;
+  height: 4px;
+  background: #222;
+  border-radius: 0 0 4px 4px;
+}
+
+/* Segmented Control */
+.segmented-control {
+  display: inline-flex;
+  padding: 4px;
+  margin-bottom: 3rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+}
+
+.segment-button {
+  padding: 8px 24px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.segment-button:hover {
+  color: var(--ink);
+}
+
+.segment-button.active {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Carousel Styles */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  color: var(--ink);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.carousel-button:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.carousel-button.prev { left: -60px; }
+.carousel-button.next { right: -60px; }
+
+/* Responsive Carousel Buttons */
+@media (max-width: 1100px) {
+  .carousel-button.prev { left: 10px; }
+  .carousel-button.next { right: 10px; }
+}
+
+.screen-display {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.screen-display img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.screen-display.iphone-frame {
+  max-width: 320px;
+}
+
+.screen-display.ipad-frame {
+  max-width: 700px;
 }
 
 .feature-band,
