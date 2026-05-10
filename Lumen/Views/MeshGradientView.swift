@@ -120,5 +120,4 @@ struct MeshGradientView: View {
                 .tag(theme)
         }
     }
-    .tabViewStyle(.page)
 }

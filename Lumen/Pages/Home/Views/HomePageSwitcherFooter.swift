@@ -17,27 +17,35 @@ struct HomePageSwitcherFooter: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            HStack(spacing: 12) {
-                ForEach(HomeDisplayPage.allCases) { page in
-                    HomePageSwitcherOptionButton(page: page, isSelected: page == selectedPage) {
-                        select(page)
+            ScrollView(.horizontal) {
+                HStack(spacing: 12) {
+                    ForEach(HomeDisplayPage.allCases) { page in
+                        HomePageSwitcherOptionButton(page: page, isSelected: page == selectedPage) {
+                            select(page)
+                        }
+                        .focused(focusedPage, equals: page)
                     }
-                    .focused(focusedPage, equals: page)
-                }
 
-            }
-
-            HStack(spacing: 12) {
-                ForEach(AmbientSound.allCases) { sound in
-                    AmbientSoundSegmentButton(
-                        sound: sound,
-                        isSelected: sound == ambientAudioPlayer.selectedSound
-                    ) {
-                        defaultAmbientSound = sound
-                        ambientAudioPlayer.selectSound(sound)
-                    }
                 }
             }
+            .scrollIndicators(.hidden)
+            .scrollClipDisabled()
+
+            ScrollView(.horizontal) {
+                HStack(spacing: 12) {
+                    ForEach(AmbientSound.allCases) { sound in
+                        AmbientSoundSegmentButton(
+                            sound: sound,
+                            isSelected: sound == ambientAudioPlayer.selectedSound
+                        ) {
+                            defaultAmbientSound = sound
+                            ambientAudioPlayer.selectSound(sound)
+                        }
+                    }
+                }
+            }
+            .scrollIndicators(.hidden)
+            .scrollClipDisabled()
         }
         .tvOSFocusSection()
         .tvOSMoveUpCommand {
