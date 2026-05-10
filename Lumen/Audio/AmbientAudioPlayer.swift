@@ -9,16 +9,65 @@ import AVFoundation
 import Observation
 import SwiftUI
 
+enum AmbientSound: String, CaseIterable, Identifiable, Hashable {
+    case rain
+    case ocean
+    case forest
+    case wind
+    case fire
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .rain: "Rain"
+        case .ocean: "Ocean"
+        case .forest: "Forest"
+        case .wind: "Wind"
+        case .fire: "Fire"
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .rain: "cloud.rain"
+        case .ocean: "water.waves"
+        case .forest: "tree"
+        case .wind: "wind"
+        case .fire: "flame"
+        }
+    }
+
+    var fileExtension: String { "m4a" }
+
+    static var storedDefault: AmbientSound {
+        guard
+            let rawValue = UserDefaults.standard.string(forKey: AppStorageKeys.homeDefaultAmbientSound),
+            let sound = AmbientSound(rawValue: rawValue)
+        else {
+            return .rain
+        }
+
+        return sound
+    }
+}
+
 @Observable
 final class AmbientAudioPlayer {
     static let disabled = AmbientAudioPlayer(resourceName: "", fileExtension: "")
 
-    private let resourceName: String
-    private let fileExtension: String
+    private var resourceName: String
+    private var fileExtension: String
+    private(set) var selectedSound: AmbientSound? = .rain
     private(set) var isPlaying = false
 
     @ObservationIgnored
     private var player: AVAudioPlayer?
+
+    convenience init(sound: AmbientSound) {
+        self.init(resourceName: sound.rawValue, fileExtension: sound.fileExtension)
+        selectedSound = sound
+    }
 
     init(resourceName: String, fileExtension: String) {
         self.resourceName = resourceName
@@ -31,6 +80,7 @@ final class AmbientAudioPlayer {
         }
 
         if let player {
+            player.numberOfLoops = looping ? -1 : 0
             if !player.isPlaying {
                 player.play()
             }
@@ -57,9 +107,39 @@ final class AmbientAudioPlayer {
         }
     }
 
+    func selectSound(_ sound: AmbientSound) {
+        if selectedSound == sound, isPlaying {
+            stop(clearSelection: true)
+            return
+        }
+
+        playSound(sound)
+    }
+
+    func playSound(_ sound: AmbientSound) {
+        if selectedSound == sound, isPlaying {
+            return
+        }
+
+        player?.stop()
+        player = nil
+        isPlaying = false
+        selectedSound = sound
+        resourceName = sound.rawValue
+        fileExtension = sound.fileExtension
+        play()
+    }
+
     func stop() {
+        stop(clearSelection: false)
+    }
+
+    private func stop(clearSelection: Bool) {
         player?.stop()
         isPlaying = false
+        if clearSelection {
+            selectedSound = nil
+        }
     }
 
     private var audioURL: URL? {

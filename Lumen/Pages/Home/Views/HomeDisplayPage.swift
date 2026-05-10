@@ -28,12 +28,12 @@ enum HomeDisplayPage: String, CaseIterable, Identifiable, Hashable {
     }
 
     @ViewBuilder
-    var content: some View {
+    func content(isActive: Bool = true) -> some View {
         switch self {
         case .time:
-            TimePage()
+            TimePage(isAnimating: isActive)
         case .liquidGlassTime:
-            LiquidGlassTimePage()
+            LiquidGlassTimePage(isAnimating: isActive)
         }
     }
 }

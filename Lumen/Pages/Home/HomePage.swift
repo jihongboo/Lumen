@@ -8,24 +8,31 @@
 import SwiftUI
 
 struct HomePage: View {
-    @State private var selectedPage = HomeDisplayPage.liquidGlassTime
+    @AppStorage(AppStorageKeys.homeSelectedPage) private var selectedPage = HomeDisplayPage.liquidGlassTime
     @State private var isSwitchingPage = false
-    @FocusState private var isPlayerButtonFocused: Bool
     @FocusState private var isSwitcherButtonFocused: Bool
     @FocusState private var focusedSwitcherPage: HomeDisplayPage?
-
+    
     var body: some View {
-        GeometryReader { proxy in
+        ZStack {
             HomePageCarousel(
                 selectedPage: $selectedPage,
                 isSwitchingPage: isSwitchingPage,
-                size: proxy.size
             )
-            .overlay(alignment: .topTrailing) {
-                HStack(spacing: 8) {
-                    HomePlayerButton()
-                        .focused($isPlayerButtonFocused)
-                    
+            .overlay {
+                if isSwitchingPage {
+                    HomePageSwitcherFooter(
+                        selectedPage: $selectedPage,
+                        focusedPage: $focusedSwitcherPage,
+                        isSwitcherButtonFocused: $isSwitcherButtonFocused
+                    )
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .ignoresSafeArea()
+            
+            Color.clear
+                .overlay(alignment: .topTrailing) {
                     Button(isSwitchingPage ? "完成页面切换" : "切换页面", systemImage: isSwitchingPage ? "checkmark" : "rectangle.stack") {
                         withAnimation(.smooth) {
                             isSwitchingPage.toggle()
@@ -39,37 +46,24 @@ struct HomePage: View {
                             focusedSwitcherPage = selectedPage
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
                 }
-            }
-            .overlay {
-                if isSwitchingPage {
-                    HomePageSwitcherFooter(
-                        selectedPage: $selectedPage,
-                        focusedPage: $focusedSwitcherPage,
-                        isSwitcherButtonFocused: $isSwitcherButtonFocused
-                    )
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
         }
-        .preferredColorScheme(.dark)
-        .ignoresSafeArea()
     }
 }
 
 private extension View {
     @ViewBuilder
     func tvOSMoveDownCommand(_ action: @escaping () -> Void) -> some View {
-        #if os(tvOS)
+#if os(tvOS)
         onMoveCommand { direction in
             if direction == .down {
                 action()
             }
         }
-        #else
+#else
         self
-        #endif
+#endif
     }
 }
 

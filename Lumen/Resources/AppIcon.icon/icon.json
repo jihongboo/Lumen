@@ -1,0 +1,67 @@
+{
+  "fill" : {
+    "automatic-gradient" : "srgb:0.99942,0.98555,0.00000,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill" : {
+            "automatic-gradient" : "gray:1.00000,0.79136"
+          },
+          "image-name" : "路径.svg",
+          "name" : "路径",
+          "position" : {
+            "scale" : 4,
+            "translation-in-points" : [
+              0.1942516436151891,
+              -161.30885210849914
+            ]
+          }
+        },
+        {
+          "fill" : {
+            "automatic-gradient" : "gray:1.00000,0.79136"
+          },
+          "image-name" : "路径.svg",
+          "name" : "路径",
+          "position" : {
+            "scale" : 4,
+            "translation-in-points" : [
+              0.1942516436151891,
+              3.3691406997604645e-07
+            ]
+          }
+        },
+        {
+          "fill" : {
+            "automatic-gradient" : "gray:1.00000,0.79136"
+          },
+          "image-name" : "路径.svg",
+          "name" : "路径",
+          "position" : {
+            "scale" : 4,
+            "translation-in-points" : [
+              0.1942516436151891,
+              172.84886336242812
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

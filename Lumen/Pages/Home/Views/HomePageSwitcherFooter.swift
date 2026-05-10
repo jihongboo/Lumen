@@ -8,17 +8,35 @@
 import SwiftUI
 
 struct HomePageSwitcherFooter: View {
+    @Environment(\.ambientAudioPlayer) private var ambientAudioPlayer
+    @AppStorage(AppStorageKeys.homeDefaultAmbientSound) private var defaultAmbientSound = AmbientSound.rain
+
     @Binding var selectedPage: HomeDisplayPage
     let focusedPage: FocusState<HomeDisplayPage?>.Binding
     let isSwitcherButtonFocused: FocusState<Bool>.Binding
 
     var body: some View {
-        HStack(spacing: 12) {
-            ForEach(HomeDisplayPage.allCases) { page in
-                HomePageSwitcherOptionButton(page: page, isSelected: page == selectedPage) {
-                    select(page)
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                ForEach(HomeDisplayPage.allCases) { page in
+                    HomePageSwitcherOptionButton(page: page, isSelected: page == selectedPage) {
+                        select(page)
+                    }
+                    .focused(focusedPage, equals: page)
                 }
-                .focused(focusedPage, equals: page)
+
+            }
+
+            HStack(spacing: 12) {
+                ForEach(AmbientSound.allCases) { sound in
+                    AmbientSoundSegmentButton(
+                        sound: sound,
+                        isSelected: sound == ambientAudioPlayer.selectedSound
+                    ) {
+                        defaultAmbientSound = sound
+                        ambientAudioPlayer.selectSound(sound)
+                    }
+                }
             }
         }
         .tvOSFocusSection()
@@ -26,7 +44,7 @@ struct HomePageSwitcherFooter: View {
             isSwitcherButtonFocused.wrappedValue = true
         }
         .padding(.horizontal, 18)
-        .padding(.bottom, 34)
+        .padding(.bottom)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .onAppear {
             focusedPage.wrappedValue = selectedPage
@@ -64,6 +82,28 @@ private extension View {
         #else
         self
         #endif
+    }
+}
+
+private struct AmbientSoundSegmentButton: View {
+    let sound: AmbientSound
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Label(sound.title, systemImage: sound.symbol)
+                .font(.system(.callout, design: .rounded, weight: .semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .padding(.horizontal, 15)
+                .frame(height: 44)
+                .foregroundStyle(isSelected ? .black : .white)
+        }
+        .tint(isSelected ? .white : .clear)
+        .buttonStyle(.glassProminent)
+        .accessibilityLabel(sound.title)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

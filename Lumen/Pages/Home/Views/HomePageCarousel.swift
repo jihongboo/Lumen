@@ -9,45 +9,23 @@ import SwiftUI
 
 struct HomePageCarousel: View {
     @Binding var selectedPage: HomeDisplayPage
-
     let isSwitchingPage: Bool
-    let size: CGSize
-
+    
     var body: some View {
-        TabView(selection: $selectedPage) {
-            ForEach(HomeDisplayPage.allCases) { page in
-                page.content
-                    .frame(width: size.width, height: size.height)
-                    .clipShape(RoundedRectangle(cornerRadius: isSwitchingPage ? 32 : 0, style: .continuous))
-                    .padding(.horizontal, isSwitchingPage ? 28 : 0)
-                    .tag(page)
-            }
-        }
-        .tabViewStyle(.page(indexDisplayMode: .never))
-        .scaleEffect(isSwitchingPage ? 0.7 : 1)
-        .allowsHitTesting(allowsPageInteraction)
-        .animation(.smooth, value: isSwitchingPage)
-    }
-
-    private var allowsPageInteraction: Bool {
-        #if os(tvOS)
-        !isSwitchingPage
-        #else
-        isSwitchingPage
-        #endif
+        selectedPage.content(isActive: !isSwitchingPage)
+            .animation(.smooth, value: selectedPage)
+            .clipShape(RoundedRectangle(cornerRadius: isSwitchingPage ? 64 : 0, style: .continuous))
+            .scaleEffect(isSwitchingPage ? 0.7 : 1)
     }
 }
 
 #Preview {
     @Previewable @State var selectedPage = HomeDisplayPage.liquidGlassTime
-
-    GeometryReader { proxy in
-        HomePageCarousel(
-            selectedPage: $selectedPage,
-            isSwitchingPage: true,
-            size: proxy.size
-        )
-    }
+    
+    HomePageCarousel(
+        selectedPage: $selectedPage,
+        isSwitchingPage: true,
+    )
     .background(.black)
     .ignoresSafeArea()
 }

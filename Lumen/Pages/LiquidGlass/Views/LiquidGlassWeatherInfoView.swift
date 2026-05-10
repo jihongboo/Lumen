@@ -41,7 +41,7 @@ struct LiquidGlassWeatherInfoView: View {
     }
 }
 
-struct WeatherInfo: Sendable {
+struct WeatherInfo: Equatable, Sendable {
     var location: String
     var condition: String
     var symbol: String

@@ -60,7 +60,6 @@ struct LiquidGlassOrbFieldView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
     }
 }
 

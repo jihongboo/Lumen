@@ -8,21 +8,26 @@
 import SwiftUI
 
 struct MeshGradientView: View {
-    let theme: Theme
+    let defaultTheme: Theme?
+    let isAnimating: Bool
+    let frameInterval: TimeInterval
+    
+    @Environment(WeatherLocationService.self) private var weatherAndLocation
+    private var theme: Theme { defaultTheme ?? Theme.current(date: Date(), weather: weatherAndLocation.weatherInfo) }
 
-    init(theme: Theme = .rainy) {
-        self.theme = theme
+    init(theme defaultTheme: Theme? = nil, isAnimating: Bool = true, frameInterval: TimeInterval = 1.0 / 24.0) {
+        self.defaultTheme = defaultTheme
+        self.isAnimating = isAnimating
+        self.frameInterval = frameInterval
     }
 
     var body: some View {
-        TimelineView(.animation) { timeline in
-            let time = timeline.date.timeIntervalSinceReferenceDate
-
+        TimelineView(.periodic(from: .now, by: isAnimating ? frameInterval : Double.infinity)) { timeline in
             MeshGradient(
                 width: 4,
                 height: 4,
-                points: meshPoints(at: time),
-                colors: meshColors(at: time)
+                points: meshPoints(at: timeline.date.timeIntervalSinceReferenceDate),
+                colors: meshColors(at: timeline.date.timeIntervalSinceReferenceDate)
             )
         }
     }
@@ -116,5 +121,4 @@ struct MeshGradientView: View {
         }
     }
     .tabViewStyle(.page)
-    .preferredColorScheme(.dark)
 }
