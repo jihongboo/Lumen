@@ -9,34 +9,40 @@ import SwiftUI
 
 struct LiquidGlassWeatherInfoView: View {
     let weather: WeatherInfo
-
+    
     var body: some View {
         weatherSummary
     }
-
+    
     private var weatherSummary: some View {
-        HStack(spacing: 14) {
-            Image(systemName: weather.symbol)
-                .font(.system(size: 34, weight: .semibold))
-                .symbolRenderingMode(.multicolor)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(weather.location)
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+        VStack {
+            HStack(spacing: 14) {
+                Image(systemName: weather.symbol)
+                    .font(.system(size: 34, weight: .semibold))
+                    .symbolRenderingMode(.multicolor)
+                
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(weather.location)
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    
+                    Text(weather.condition)
+                        .font(.system(.caption, design: .rounded, weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+                
+                Text(weather.temperature)
+                    .font(.system(size: 42, weight: .thin, design: .rounded))
+                    .monospacedDigit()
                     .foregroundStyle(.primary)
                     .lineLimit(1)
-
-                Text(weather.condition)
-                    .font(.system(.caption, design: .rounded, weight: .medium))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
             }
-
-            Text(weather.temperature)
-                .font(.system(size: 42, weight: .thin, design: .rounded))
-                .monospacedDigit()
-                .foregroundStyle(.primary)
-                .lineLimit(1)
+            Text("Provided by [ Weather](https://weatherkit.apple.com/legal-attribution.html) \(Image(systemName: "arrow.up.right"))")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .tint(.secondary)
         }
     }
 }
@@ -49,7 +55,7 @@ struct WeatherInfo: Equatable, Sendable {
     var feelsLike: String
     var humidity: String
     var wind: String
-
+    
     static let preview = WeatherInfo(
         location: "San Francisco",
         condition: "Partly Cloudy",
@@ -59,4 +65,8 @@ struct WeatherInfo: Equatable, Sendable {
         humidity: "72%",
         wind: "3 m/s"
     )
+}
+
+#Preview {
+    LiquidGlassWeatherInfoView(weather: WeatherInfo.preview)
 }
