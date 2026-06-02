@@ -10,12 +10,17 @@ import SwiftUI
 struct LiquidGlassTimePage: View {
     let isAnimating: Bool
     
+    @Environment(WeatherLocationService.self) private var weatherAndLocation
+    
     var body: some View {
-        MeshGradientView(isAnimating: isAnimating)
-            .ignoresSafeArea()
-            .overlay {
-                LiquidGlassTimeView()
-            }
+        MeshGradientView(
+            theme: Theme.current(weather: weatherAndLocation.weatherInfo),
+            isAnimating: isAnimating
+        )
+        .ignoresSafeArea()
+        .overlay {
+            LiquidGlassTimeView()
+        }
     }
 }
 

@@ -36,26 +36,6 @@ struct HomePageSwitcherOptionButton: View {
         HomePageSwitcherOptionButton(page: .liquidGlassTime, isSelected: false) {
             
         }
-
-        HomePageSwitcherOptionButton(page: .particleOcean, isSelected: false) {
-
-        }
-
-        HomePageSwitcherOptionButton(page: .auroraVeil, isSelected: false) {
-
-        }
-
-        HomePageSwitcherOptionButton(page: .starTunnel, isSelected: false) {
-
-        }
-
-        HomePageSwitcherOptionButton(page: .chromaBloom, isSelected: false) {
-
-        }
-
-        HomePageSwitcherOptionButton(page: .prismRefraction, isSelected: false) {
-
-        }
     }
     .padding()
     .background(.black)

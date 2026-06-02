@@ -8,21 +8,11 @@
 import SwiftUI
 
 struct MeshGradientView: View {
-    let defaultTheme: Theme?
+    let theme: Theme
     let isAnimating: Bool
-    let frameInterval: TimeInterval
-    
-    @Environment(WeatherLocationService.self) private var weatherAndLocation
-    private var theme: Theme { defaultTheme ?? Theme.current(date: Date(), weather: weatherAndLocation.weatherInfo) }
-
-    init(theme defaultTheme: Theme? = nil, isAnimating: Bool = true, frameInterval: TimeInterval = 1.0 / 24.0) {
-        self.defaultTheme = defaultTheme
-        self.isAnimating = isAnimating
-        self.frameInterval = frameInterval
-    }
 
     var body: some View {
-        TimelineView(.periodic(from: .now, by: isAnimating ? frameInterval : Double.infinity)) { timeline in
+        TimelineView(.periodic(from: .now, by: isAnimating ? 1.0 / 24.0 : Double.infinity)) { timeline in
             MeshGradient(
                 width: 4,
                 height: 4,
@@ -109,7 +99,7 @@ struct MeshGradientView: View {
 #Preview("Theme Meshes") {
     TabView {
         ForEach(Theme.allCases) { theme in
-            MeshGradientView(theme: theme)
+            MeshGradientView(theme: theme, isAnimating: true)
                 .ignoresSafeArea()
                 .overlay(alignment: .bottomLeading) {
                     Text(theme.title)
