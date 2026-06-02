@@ -120,4 +120,5 @@ struct MeshGradientView: View {
                 .tag(theme)
         }
     }
+    .environment(WeatherLocationService())
 }

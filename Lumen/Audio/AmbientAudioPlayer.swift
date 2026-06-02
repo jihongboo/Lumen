@@ -75,6 +75,10 @@ final class AmbientAudioPlayer {
     }
 
     func play(looping: Bool = true) {
+        guard !isPreviews else {
+            return
+        }
+
         guard !resourceName.isEmpty, !fileExtension.isEmpty else {
             return
         }
@@ -158,8 +162,11 @@ final class AmbientAudioPlayer {
         }
         #endif
     }
+
 }
 
 extension EnvironmentValues {
     @Entry var ambientAudioPlayer = AmbientAudioPlayer.disabled
 }
+
+
