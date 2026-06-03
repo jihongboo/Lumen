@@ -1,4 +1,4 @@
 enum AppStorageKeys {
-    static let homeSelectedPage = "home.selectedPage"
+    static let homeSelectedBackground = "home.selectedBackground"
     static let homeDefaultAmbientSound = "home.defaultAmbientSound"
 }

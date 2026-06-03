@@ -8,62 +8,33 @@
 import SwiftUI
 
 struct HomePage: View {
-    @AppStorage(AppStorageKeys.homeSelectedPage) private var selectedPage = HomeDisplayPage.liquidGlassTime
+    @AppStorage(AppStorageKeys.homeSelectedBackground) private var background = Background.meshGradient
     @State private var isSwitchingPage = false
-    @FocusState private var isSwitcherButtonFocused: Bool
-    @FocusState private var focusedSwitcherPage: HomeDisplayPage?
     
     var body: some View {
         ZStack {
-            HomePageCarousel(
-                selectedPage: $selectedPage,
-                isSwitchingPage: isSwitchingPage,
-            )
-            .overlay {
-                if isSwitchingPage {
-                    HomePageSwitcherFooter(
-                        selectedPage: $selectedPage,
-                        focusedPage: $focusedSwitcherPage,
-                        isSwitcherButtonFocused: $isSwitcherButtonFocused
-                    )
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            LiquidGlassTimePage(background: background)
+                .overlay {
+                    if isSwitchingPage {
+                        HomePageSwitcherFooter()
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
                 }
-            }
-            .ignoresSafeArea()
+                .ignoresSafeArea()
             
             Color.clear
                 .overlay(alignment: .topTrailing) {
-                    Button(isSwitchingPage ? "完成页面切换" : "切换页面", systemImage: isSwitchingPage ? "checkmark" : "rectangle.stack") {
+                    Button(isSwitchingPage ? "完成页面切换" : "切换页面", systemImage: isSwitchingPage ? "rectangle.stack.fill" : "rectangle.stack") {
                         withAnimation(.smooth) {
                             isSwitchingPage.toggle()
                         }
                     }
+                    .controlSize(.large)
                     .labelStyle(.iconOnly)
                     .buttonStyle(.glass)
-                    .focused($isSwitcherButtonFocused)
-                    .tvOSMoveDownCommand {
-                        if isSwitchingPage {
-                            focusedSwitcherPage = selectedPage
-                        }
-                    }
                     .padding(.horizontal)
                 }
         }
-    }
-}
-
-private extension View {
-    @ViewBuilder
-    func tvOSMoveDownCommand(_ action: @escaping () -> Void) -> some View {
-#if os(tvOS)
-        onMoveCommand { direction in
-            if direction == .down {
-                action()
-            }
-        }
-#else
-        self
-#endif
     }
 }
 

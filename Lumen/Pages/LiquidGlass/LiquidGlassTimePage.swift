@@ -7,24 +7,53 @@
 
 import SwiftUI
 
-struct LiquidGlassTimePage: View {
-    let isAnimating: Bool
+enum Background: String, CaseIterable, Identifiable {
+    var id: Background { self }
     
-    @Environment(WeatherLocationService.self) private var weatherAndLocation
+    case meshGradient
+    case smoke
     
-    var body: some View {
-        MeshGradientView(
-            theme: Theme.current(weather: weatherAndLocation.weatherInfo),
-            isAnimating: isAnimating
-        )
-        .ignoresSafeArea()
-        .overlay {
-            LiquidGlassTimeView()
+    var title: LocalizedStringKey {
+        switch self {
+        case .meshGradient:
+            "Gradient"
+        case .smoke:
+            "Smock"
         }
     }
 }
 
+struct LiquidGlassTimePage: View {
+    let background: Background
+    
+    @Environment(WeatherLocationService.self) private var weatherAndLocation
+    private var theme: Theme {
+        Theme.current(weather: weatherAndLocation.weatherInfo)
+    }
+    
+    var body: some View {
+        backgroundView
+            .overlay {
+                LiquidGlassTimeView()
+            }
+    }
+    
+    var backgroundView: some View {
+        ZStack {
+            switch background {
+            case .meshGradient:
+                MeshGradientView(theme: theme)
+            case .smoke:
+                SWInkSmoke(theme: theme)
+            }
+        }
+        .ignoresSafeArea()
+        .transition(.opacity)
+        .animation(.smooth, value: background)
+    }
+}
+
 #Preview {
-    LiquidGlassTimePage(isAnimating: true)
+    LiquidGlassTimePage(background: .meshGradient)
         .environment(WeatherLocationService.preview())
 }

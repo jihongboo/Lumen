@@ -10,29 +10,21 @@ import SwiftUI
 struct HomePageSwitcherFooter: View {
     @Environment(\.ambientAudioPlayer) private var ambientAudioPlayer
     @AppStorage(AppStorageKeys.homeDefaultAmbientSound) private var defaultAmbientSound = AmbientSound.rain
-
-    @Binding var selectedPage: HomeDisplayPage
-    let focusedPage: FocusState<HomeDisplayPage?>.Binding
-    let isSwitcherButtonFocused: FocusState<Bool>.Binding
+    @AppStorage(AppStorageKeys.homeSelectedBackground) private var selection = Background.meshGradient
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack {
             ScrollView(.horizontal) {
-                HStack(spacing: 12) {
-                    ForEach(HomeDisplayPage.allCases) { page in
-                        HomePageSwitcherOptionButton(page: page, isSelected: page == selectedPage) {
-                            select(page)
-                        }
-                        .focused(focusedPage, equals: page)
+                HStack {
+                    ForEach(Background.allCases) { background in
+                        HomePageSwitcherOptionButton(background: background, selection: $selection)
                     }
-
                 }
             }
-            .scrollIndicators(.hidden)
-            .scrollClipDisabled()
+
 
             ScrollView(.horizontal) {
-                HStack(spacing: 12) {
+                HStack {
                     ForEach(AmbientSound.allCases) { sound in
                         AmbientSoundSegmentButton(
                             sound: sound,
@@ -44,52 +36,11 @@ struct HomePageSwitcherFooter: View {
                     }
                 }
             }
-            .scrollIndicators(.hidden)
-            .scrollClipDisabled()
         }
-        .tvOSFocusSection()
-        .tvOSMoveUpCommand {
-            isSwitcherButtonFocused.wrappedValue = true
-        }
-        .padding(.horizontal, 18)
-        .padding(.bottom)
+        .scrollIndicators(.hidden)
+        .scrollClipDisabled()
+        .scenePadding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-        .onAppear {
-            focusedPage.wrappedValue = selectedPage
-        }
-        .onChange(of: selectedPage) {
-            focusedPage.wrappedValue = selectedPage
-        }
-    }
-
-    private func select(_ page: HomeDisplayPage) {
-        withAnimation(.smooth) {
-            selectedPage = page
-        }
-    }
-}
-
-private extension View {
-    @ViewBuilder
-    func tvOSFocusSection() -> some View {
-        #if os(tvOS)
-        focusSection()
-        #else
-        self
-        #endif
-    }
-
-    @ViewBuilder
-    func tvOSMoveUpCommand(_ action: @escaping () -> Void) -> some View {
-        #if os(tvOS)
-        onMoveCommand { direction in
-            if direction == .up {
-                action()
-            }
-        }
-        #else
-        self
-        #endif
     }
 }
 
@@ -116,18 +67,5 @@ private struct AmbientSoundSegmentButton: View {
 }
 
 #Preview {
-    @Previewable @State var selectedPage = HomeDisplayPage.liquidGlassTime
-    @FocusState var focusedPage: HomeDisplayPage?
-    @FocusState var isSwitcherButtonFocused: Bool
-
-    ZStack {
-        Color.black
-            .ignoresSafeArea()
-
-        HomePageSwitcherFooter(
-            selectedPage: $selectedPage,
-            focusedPage: $focusedPage,
-            isSwitcherButtonFocused: $isSwitcherButtonFocused
-        )
-    }
+    HomePageSwitcherFooter()
 }

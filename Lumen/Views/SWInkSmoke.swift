@@ -19,6 +19,9 @@
 //        // Your content here
 //    }
 //
+//    // Theme — colors follow the app time/weather theme
+//    SWInkSmoke(theme: .rainy)
+//
 //    // Recolor — emerald / teal ink
 //    SWInkSmoke(
 //        ink1: .black,
@@ -37,6 +40,8 @@
 //    SWInkSmoke(showsControls: true)
 //
 //  Parameters:
+//    - theme: Optional app theme. When supplied, the theme palette overrides
+//             the ink/glow defaults.
 //    - ink1: First ink color, dominant where the final FBM is darkest
 //            (default deep aubergine `#0D001A`)
 //    - ink2: Second ink color, mixed in by the final FBM
@@ -77,6 +82,9 @@ import SwiftUI
 // MARK: - Main View
 
 struct SWInkSmoke: View {
+    /// Optional app theme. When supplied, the theme palette overrides ink/glow defaults.
+    var theme: Theme
+
     /// First ink color, dominant where the final FBM is darkest.
     var ink1: Color = Color(red: 0.051, green: 0.0,   blue: 0.102)   // #0D001A
 
@@ -106,17 +114,24 @@ struct SWInkSmoke: View {
 
     /// When `true`, attaches a gear `ToolbarItem` that opens a live-tuning sheet.
     var showsControls: Bool = false
+    
+    init(theme: Theme, showsControls: Bool = false) {
+        self.theme = theme
+        self.showsControls = showsControls
+    }
 
     var body: some View {
+        let palette = theme.inkSmokePalette
+
         if showsControls {
             SWInkSmokeControlled(initial: self)
         } else {
             SWInkSmokeRenderer(
-                ink1: ink1,
-                ink2: ink2,
-                ink3: ink3,
-                ink4: ink4,
-                glow: glow,
+                ink1: palette.ink1,
+                ink2: palette.ink2,
+                ink3: palette.ink3,
+                ink4: palette.ink4,
+                glow: palette.glow,
                 speed: speed,
                 scale: scale,
                 warp: warp,
@@ -124,6 +139,14 @@ struct SWInkSmoke: View {
             )
         }
     }
+}
+
+private struct SWInkSmokePalette {
+    let ink1: Color
+    let ink2: Color
+    let ink3: Color
+    let ink4: Color
+    let glow: Color
 }
 
 // MARK: - Renderer (pure shader binding)
@@ -183,11 +206,13 @@ private struct SWInkSmokeControlled: View {
     @State private var showSheet = false
 
     init(initial: SWInkSmoke) {
-        _ink1      = State(initialValue: initial.ink1)
-        _ink2      = State(initialValue: initial.ink2)
-        _ink3      = State(initialValue: initial.ink3)
-        _ink4      = State(initialValue: initial.ink4)
-        _glow      = State(initialValue: initial.glow)
+        let palette = initial.theme.inkSmokePalette
+
+        _ink1      = State(initialValue: palette.ink1)
+        _ink2      = State(initialValue: palette.ink2)
+        _ink3      = State(initialValue: palette.ink3)
+        _ink4      = State(initialValue: palette.ink4)
+        _glow      = State(initialValue: palette.glow)
         _speed     = State(initialValue: initial.speed)
         _scale     = State(initialValue: initial.scale)
         _warp      = State(initialValue: initial.warp)
@@ -304,11 +329,59 @@ private struct SliderRow: View {
     }
 }
 
-// MARK: - Preview
+private extension Theme {
+    var inkSmokePalette: SWInkSmokePalette {
+        switch self {
+        case .morning:
+            SWInkSmokePalette(
+                ink1: Color(red: 0.11, green: 0.08, blue: 0.18),
+                ink2: Color(red: 0.46, green: 0.32, blue: 0.48),
+                ink3: Color(red: 0.84, green: 0.48, blue: 0.44),
+                ink4: Color(red: 0.40, green: 0.42, blue: 0.58),
+                glow: Color(red: 1.00, green: 0.74, blue: 0.64)
+            )
+        case .sunnyNoon:
+            SWInkSmokePalette(
+                ink1: Color(red: 0.03, green: 0.12, blue: 0.28),
+                ink2: Color(red: 0.12, green: 0.34, blue: 0.58),
+                ink3: Color(red: 0.48, green: 0.44, blue: 0.22),
+                ink4: Color(red: 0.12, green: 0.46, blue: 0.52),
+                glow: Color(red: 0.68, green: 0.52, blue: 0.26)
+            )
+        case .rainy:
+            SWInkSmokePalette(
+                ink1: Color(red: 0.03, green: 0.06, blue: 0.12),
+                ink2: Color(red: 0.12, green: 0.22, blue: 0.32),
+                ink3: Color(red: 0.26, green: 0.38, blue: 0.46),
+                ink4: Color(red: 0.12, green: 0.34, blue: 0.42),
+                glow: Color(red: 0.58, green: 0.82, blue: 0.92)
+            )
+        case .night:
+            SWInkSmokePalette(
+                ink1: Color(red: 0.01, green: 0.02, blue: 0.09),
+                ink2: Color(red: 0.05, green: 0.12, blue: 0.32),
+                ink3: Color(red: 0.10, green: 0.18, blue: 0.38),
+                ink4: Color(red: 0.04, green: 0.20, blue: 0.36),
+                glow: Color(red: 0.34, green: 0.48, blue: 0.76)
+            )
+        }
+    }
+}
 
 #Preview {
-    // ToolbarItem requires an enclosing NavigationStack to render.
-    NavigationStack {
-        SWInkSmoke(showsControls: true)
+    TabView {
+        ForEach(Theme.allCases) { theme in
+            Tab(theme.title, systemImage: "") {
+                SWInkSmoke(theme: theme)
+                    .ignoresSafeArea()
+                    .overlay(alignment: .bottom) {
+                        Text(theme.title)
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .padding(.bottom, 32)
+                    }
+                    .tag(theme)
+            }
+        }
     }
 }

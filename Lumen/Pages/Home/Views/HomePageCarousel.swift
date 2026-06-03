@@ -13,9 +13,6 @@ struct HomePageCarousel: View {
     
     var body: some View {
         selectedPage.content(isActive: !isSwitchingPage)
-            .animation(.smooth, value: selectedPage)
-            .clipShape(RoundedRectangle(cornerRadius: isSwitchingPage ? 64 : 0, style: .continuous))
-            .scaleEffect(isSwitchingPage ? 0.7 : 1)
     }
 }
 

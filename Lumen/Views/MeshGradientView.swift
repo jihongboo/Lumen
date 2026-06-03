@@ -10,6 +10,11 @@ import SwiftUI
 struct MeshGradientView: View {
     let theme: Theme
     let isAnimating: Bool
+    
+    init(theme: Theme, isAnimating: Bool = true) {
+        self.theme = theme
+        self.isAnimating = isAnimating
+    }
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: isAnimating ? 1.0 / 24.0 : Double.infinity)) { timeline in

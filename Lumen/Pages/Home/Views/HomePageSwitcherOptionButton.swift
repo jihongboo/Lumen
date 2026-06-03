@@ -8,13 +8,19 @@
 import SwiftUI
 
 struct HomePageSwitcherOptionButton: View {
-    let page: HomeDisplayPage
-    let isSelected: Bool
-    let action: () -> Void
-        
+    let background: Background
+    @Binding var selection: Background
+    private var isSelected: Bool {
+        background == selection
+    }
+    
     var body: some View {
-        Button(action: action) {
-            Text(page.title)
+        Button {
+            withAnimation(.smooth) {
+                selection = background
+            }
+        } label: {
+            Text(background.title)
                 .font(.system(.callout, design: .rounded, weight: .semibold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -24,19 +30,15 @@ struct HomePageSwitcherOptionButton: View {
         }
         .tint(isSelected ? .white : .clear)
         .buttonStyle(.glassProminent)
+        .animation(.smooth, value: selection)
     }
 }
 
 #Preview {
-    HStack(spacing: 12) {
-        HomePageSwitcherOptionButton(page: .time, isSelected: true) {
-            
-        }
-        
-        HomePageSwitcherOptionButton(page: .liquidGlassTime, isSelected: false) {
-            
-        }
+    @Previewable @State var selection = Background.meshGradient
+    HStack {
+        HomePageSwitcherOptionButton(background: .meshGradient, selection: $selection)
+        HomePageSwitcherOptionButton(background: .smoke, selection: $selection)
     }
     .padding()
-    .background(.black)
 }

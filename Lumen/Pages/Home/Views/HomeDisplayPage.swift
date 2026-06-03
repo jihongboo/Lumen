@@ -33,7 +33,7 @@ enum HomeDisplayPage: String, CaseIterable, Identifiable, Hashable {
         case .time:
             TimePage(isAnimating: isActive)
         case .liquidGlassTime:
-            LiquidGlassTimePage(isAnimating: isActive)
+            LiquidGlassTimePage(background: .meshGradient)
         }
     }
 }
