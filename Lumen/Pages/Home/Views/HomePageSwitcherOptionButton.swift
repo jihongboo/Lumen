@@ -16,9 +16,7 @@ struct HomePageSwitcherOptionButton: View {
     
     var body: some View {
         Button {
-            withAnimation(.smooth) {
-                selection = background
-            }
+            selection = background
         } label: {
             Text(background.title)
                 .font(.system(.callout, design: .rounded, weight: .semibold))

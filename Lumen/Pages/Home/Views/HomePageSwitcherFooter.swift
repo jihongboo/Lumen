@@ -40,6 +40,17 @@ struct HomePageSwitcherFooter: View {
         .scrollIndicators(.hidden)
         .scrollClipDisabled()
         .scenePadding()
+        .background(alignment: .bottom) {
+            LinearGradient(
+                colors: [
+                    .black.opacity(0),
+                    .black.opacity(0.65)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea(edges: .bottom)
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 }

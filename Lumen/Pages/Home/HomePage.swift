@@ -21,6 +21,11 @@ struct HomePage: View {
                     }
                 }
                 .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.smooth) {
+                        isSwitchingPage = false
+                    }
+                }
             
             Color.clear
                 .overlay(alignment: .topTrailing) {
@@ -32,7 +37,7 @@ struct HomePage: View {
                     .controlSize(.large)
                     .labelStyle(.iconOnly)
                     .buttonStyle(.glass)
-                    .padding(.horizontal)
+                    .padding()
                 }
         }
     }
