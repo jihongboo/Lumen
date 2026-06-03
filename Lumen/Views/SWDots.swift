@@ -254,8 +254,6 @@ private struct SWDotsControlled: View {
     @State private var vignette: Float
     @State private var horizon: Float
 
-    @State private var showSheet = false
-
     init(initial: SWDots) {
         _style        = State(initialValue: initial.style)
         _tint         = State(initialValue: initial.tint)
@@ -287,120 +285,6 @@ private struct SWDotsControlled: View {
             horizon: horizon
         )
         .ignoresSafeArea()
-        .toolbar {
-            // Native toolbar item — sits in the navigation bar of the
-            // enclosing `NavigationStack`, so hit-testing is handled by
-            // UIKit/AppKit and the button is never occluded by the bar.
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showSheet = true
-                } label: {
-                    Image(systemName: "slider.horizontal.3")
-                }
-                .accessibilityLabel("Dots Controls")
-            }
-        }
-        .sheet(isPresented: $showSheet) {
-            SWDotsControlsSheet(
-                style: $style,
-                tint: $tint,
-                background: $background,
-                speed: $speed,
-                brightness: $brightness,
-                dotSize: $dotSize,
-                gridDensity: $gridDensity,
-                patternScale: $patternScale,
-                amplitude: $amplitude,
-                depthFade: $depthFade,
-                vignette: $vignette,
-                horizon: $horizon
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-        }
-    }
-}
-
-// MARK: - Controls Sheet
-
-private struct SWDotsControlsSheet: View {
-    @Binding var style: SWDotsStyle
-    @Binding var tint: Color
-    @Binding var background: Color
-    @Binding var speed: Float
-    @Binding var brightness: Float
-    @Binding var dotSize: Float
-    @Binding var gridDensity: Float
-    @Binding var patternScale: Float
-    @Binding var amplitude: Float
-    @Binding var depthFade: Float
-    @Binding var vignette: Float
-    @Binding var horizon: Float
-
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Style") {
-                    Picker("Style", selection: $style) {
-                        ForEach(SWDotsStyle.allCases) { s in
-                            Text(s.displayName).tag(s)
-                        }
-                    }
-                }
-
-                Section("Colors") {
-                    ColorPicker("Dot Color", selection: $tint, supportsOpacity: false)
-                    ColorPicker("Background", selection: $background, supportsOpacity: false)
-                }
-
-                Section("Sliders") {
-                    SliderRow(label: "Speed",         value: $speed,        range: 0...3,   step: 0.05)
-                    SliderRow(label: "Brightness",    value: $brightness,   range: 0...3,   step: 0.05)
-                    SliderRow(label: "Dot Size",      value: $dotSize,      range: 0.2...3, step: 0.05)
-                    SliderRow(label: "Grid Density",  value: $gridDensity,  range: 0.3...3, step: 0.05)
-                    SliderRow(label: "Pattern Scale", value: $patternScale, range: 0.2...3, step: 0.05)
-                    SliderRow(label: "Vignette",      value: $vignette,     range: 0...3,   step: 0.05)
-
-                    // Hidden for flat-grid styles whose shaders ignore these.
-                    if style.is3D {
-                        SliderRow(label: "Wave Amplitude", value: $amplitude, range: 0...3,      step: 0.05)
-                        SliderRow(label: "Depth Fade",     value: $depthFade, range: 0...3,      step: 0.05)
-                        SliderRow(label: "Horizon",        value: $horizon,   range: -1.0...0.4, step: 0.01)
-                    }
-                }
-            }
-            .navigationTitle("Dots Controls")
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
-        }
-    }
-}
-
-private struct SliderRow: View {
-    let label: String
-    @Binding var value: Float
-    let range: ClosedRange<Float>
-    let step: Float
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(label)
-                Spacer()
-                Text(String(format: "%.2f", value))
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-            Slider(value: $value, in: range, step: step)
-        }
     }
 }
 

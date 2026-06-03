@@ -203,8 +203,6 @@ private struct SWInkSmokeControlled: View {
     @State private var warp: Float
     @State private var highlight: Float
 
-    @State private var showSheet = false
-
     init(initial: SWInkSmoke) {
         let palette = initial.theme.inkSmokePalette
 
@@ -232,100 +230,6 @@ private struct SWInkSmokeControlled: View {
             highlight: highlight
         )
         .ignoresSafeArea()
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showSheet = true
-                } label: {
-                    Image(systemName: "slider.horizontal.3")
-                }
-                .accessibilityLabel("Ink Smoke Controls")
-            }
-        }
-        .sheet(isPresented: $showSheet) {
-            SWInkSmokeControlsSheet(
-                ink1: $ink1,
-                ink2: $ink2,
-                ink3: $ink3,
-                ink4: $ink4,
-                glow: $glow,
-                speed: $speed,
-                scale: $scale,
-                warp: $warp,
-                highlight: $highlight
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-        }
-    }
-}
-
-// MARK: - Controls Sheet
-
-private struct SWInkSmokeControlsSheet: View {
-    @Binding var ink1: Color
-    @Binding var ink2: Color
-    @Binding var ink3: Color
-    @Binding var ink4: Color
-    @Binding var glow: Color
-    @Binding var speed: Float
-    @Binding var scale: Float
-    @Binding var warp: Float
-    @Binding var highlight: Float
-
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Inks") {
-                    ColorPicker("Ink 1", selection: $ink1, supportsOpacity: false)
-                    ColorPicker("Ink 2", selection: $ink2, supportsOpacity: false)
-                    ColorPicker("Ink 3", selection: $ink3, supportsOpacity: false)
-                    ColorPicker("Ink 4", selection: $ink4, supportsOpacity: false)
-                    ColorPicker("Glow",  selection: $glow, supportsOpacity: false)
-                }
-
-                Section("Field") {
-                    SliderRow(label: "Scale",     value: $scale,     range: 0.2...5,  step: 0.05)
-                    SliderRow(label: "Warp",      value: $warp,      range: 0...10,   step: 0.1)
-                    SliderRow(label: "Highlight", value: $highlight, range: 0...3,    step: 0.05)
-                }
-
-                Section("Motion") {
-                    SliderRow(label: "Speed", value: $speed, range: 0...3, step: 0.05)
-                }
-            }
-            .navigationTitle("Ink Smoke")
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
-        }
-    }
-}
-
-private struct SliderRow: View {
-    let label: String
-    @Binding var value: Float
-    let range: ClosedRange<Float>
-    let step: Float
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(label)
-                Spacer()
-                Text(String(format: "%.2f", value))
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-            Slider(value: $value, in: range, step: step)
-        }
     }
 }
 

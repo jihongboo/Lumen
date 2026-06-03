@@ -26,9 +26,9 @@ struct HomePage: View {
                         isSwitchingPage = false
                     }
                 }
-            
-            Color.clear
-                .overlay(alignment: .topTrailing) {
+            VStack {
+                HStack {
+                    Spacer()
                     Button(isSwitchingPage ? "完成页面切换" : "切换页面", systemImage: isSwitchingPage ? "rectangle.stack.fill" : "rectangle.stack") {
                         withAnimation(.smooth) {
                             isSwitchingPage.toggle()
@@ -36,9 +36,12 @@ struct HomePage: View {
                     }
                     .controlSize(.large)
                     .labelStyle(.iconOnly)
-                    .buttonStyle(.glass)
+                    .lumenGlassButtonStyle()
                     .padding()
                 }
+                .lumenFocusSection()
+                Spacer()
+            }
         }
     }
 }

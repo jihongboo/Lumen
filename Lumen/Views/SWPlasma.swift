@@ -262,8 +262,6 @@ private struct SWPlasmaControlled: View {
     @State private var intensity: Float
     @State private var distortion: Float
 
-    @State private var showSheet = false
-
     init(initial: SWPlasma) {
         _style      = State(initialValue: initial.style)
         _c1         = State(initialValue: initial.c1)
@@ -320,111 +318,6 @@ private struct SWPlasmaControlled: View {
                 .background(Color.black.opacity(0.75), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
                 .padding(.bottom, 60)
             }
-        }
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showSheet = true
-                } label: {
-                    Image(systemName: "slider.horizontal.3")
-                }
-                .accessibilityLabel("Plasma Controls")
-            }
-        }
-        .sheet(isPresented: $showSheet) {
-            SWPlasmaControlsSheet(
-                style: $style,
-                c1: $c1, c2: $c2, c3: $c3, c4: $c4, c5: $c5,
-                scale: $scale,
-                intensity: $intensity,
-                distortion: $distortion
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-        }
-    }
-}
-
-// MARK: - Controls Sheet
-
-private struct SWPlasmaControlsSheet: View {
-    @Binding var style: SWPlasmaStyle
-    @Binding var c1: Color
-    @Binding var c2: Color
-    @Binding var c3: Color
-    @Binding var c4: Color
-    @Binding var c5: Color
-    @Binding var scale: Float
-    @Binding var intensity: Float
-    @Binding var distortion: Float
-
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Style") {
-                    Picker("Style", selection: $style) {
-                        ForEach(SWPlasmaStyle.allCases) { s in
-                            Text(s.displayName).tag(s)
-                        }
-                    }
-                }
-
-                Section("Palette") {
-                    ColorPicker("Color 1", selection: $c1, supportsOpacity: false)
-                    ColorPicker("Color 2", selection: $c2, supportsOpacity: false)
-                    ColorPicker("Color 3", selection: $c3, supportsOpacity: false)
-                    ColorPicker("Color 4", selection: $c4, supportsOpacity: false)
-                    ColorPicker("Color 5", selection: $c5, supportsOpacity: false)
-                }
-
-                Section("Field") {
-                    SliderRow(label: "Scale",      value: $scale,      range: 0.2...3, step: 0.05)
-                    SliderRow(label: "Intensity",  value: $intensity,  range: 0...2.5, step: 0.05)
-                    SliderRow(label: "Distortion", value: $distortion, range: 0...3,   step: 0.05)
-                }
-            }
-            .navigationTitle("Plasma")
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
-            // When the style changes, reset the palette to the new style's
-            // hand-tuned defaults so the caller sees the designer's intent.
-            // Any previously customized colors are overwritten — intentional.
-            .onChange(of: style) { _, newStyle in
-                let palette = newStyle.defaultPalette
-                c1 = palette[0]
-                c2 = palette[1]
-                c3 = palette[2]
-                c4 = palette[3]
-                c5 = palette[4]
-            }
-        }
-    }
-}
-
-private struct SliderRow: View {
-    let label: String
-    @Binding var value: Float
-    let range: ClosedRange<Float>
-    let step: Float
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(label)
-                Spacer()
-                Text(String(format: "%.2f", value))
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-            Slider(value: $value, in: range, step: step)
         }
     }
 }

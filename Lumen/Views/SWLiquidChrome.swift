@@ -189,8 +189,6 @@ private struct SWLiquidChromeControlled: View {
     @State private var specStrength: Float
     @State private var tintStrength: Float
 
-    @State private var showSheet = false
-
     init(initial: SWLiquidChrome) {
         _shadow       = State(initialValue: initial.shadow)
         _silver       = State(initialValue: initial.silver)
@@ -220,109 +218,6 @@ private struct SWLiquidChromeControlled: View {
             tintStrength: tintStrength
         )
         .ignoresSafeArea()
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showSheet = true
-                } label: {
-                    Image(systemName: "slider.horizontal.3")
-                }
-                .accessibilityLabel("Liquid Chrome Controls")
-            }
-        }
-        .sheet(isPresented: $showSheet) {
-            SWLiquidChromeControlsSheet(
-                shadow: $shadow,
-                silver: $silver,
-                highlight: $highlight,
-                tint: $tint,
-                speed: $speed,
-                scale: $scale,
-                warp: $warp,
-                contrast: $contrast,
-                specPower: $specPower,
-                specStrength: $specStrength,
-                tintStrength: $tintStrength
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-        }
-    }
-}
-
-// MARK: - Controls Sheet
-
-private struct SWLiquidChromeControlsSheet: View {
-    @Binding var shadow: Color
-    @Binding var silver: Color
-    @Binding var highlight: Color
-    @Binding var tint: Color
-    @Binding var speed: Float
-    @Binding var scale: Float
-    @Binding var warp: Float
-    @Binding var contrast: Float
-    @Binding var specPower: Float
-    @Binding var specStrength: Float
-    @Binding var tintStrength: Float
-
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Colors") {
-                    ColorPicker("Shadow",    selection: $shadow,    supportsOpacity: false)
-                    ColorPicker("Silver",    selection: $silver,    supportsOpacity: false)
-                    ColorPicker("Highlight", selection: $highlight, supportsOpacity: false)
-                    ColorPicker("Tint",      selection: $tint,      supportsOpacity: false)
-                }
-
-                Section("Surface") {
-                    SliderRow(label: "Scale",    value: $scale,    range: 0.2...5, step: 0.05)
-                    SliderRow(label: "Warp",     value: $warp,     range: 0...5,   step: 0.05)
-                    SliderRow(label: "Contrast", value: $contrast, range: 0.1...3, step: 0.05)
-                }
-
-                Section("Lighting") {
-                    SliderRow(label: "Spec Power",    value: $specPower,    range: 1...50, step: 0.5)
-                    SliderRow(label: "Spec Strength", value: $specStrength, range: 0...2,  step: 0.05)
-                    SliderRow(label: "Tint Strength", value: $tintStrength, range: 0...2,  step: 0.05)
-                }
-
-                Section("Motion") {
-                    SliderRow(label: "Speed", value: $speed, range: 0...3, step: 0.05)
-                }
-            }
-            .navigationTitle("Liquid Chrome")
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
-        }
-    }
-}
-
-private struct SliderRow: View {
-    let label: String
-    @Binding var value: Float
-    let range: ClosedRange<Float>
-    let step: Float
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(label)
-                Spacer()
-                Text(String(format: "%.2f", value))
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-            Slider(value: $value, in: range, step: step)
-        }
     }
 }
 

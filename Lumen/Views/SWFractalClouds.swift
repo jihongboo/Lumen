@@ -185,8 +185,6 @@ private struct SWFractalCloudsControlled: View {
     @State private var warp: Float
     @State private var coverage: Float
 
-    @State private var showSheet = false
-
     init(initial: SWFractalClouds) {
         _skyColor   = State(initialValue: initial.skyColor)
         _cloudColor = State(initialValue: initial.cloudColor)
@@ -214,103 +212,6 @@ private struct SWFractalCloudsControlled: View {
             coverage: coverage
         )
         .ignoresSafeArea()
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showSheet = true
-                } label: {
-                    Image(systemName: "slider.horizontal.3")
-                }
-                .accessibilityLabel("Fractal Clouds Controls")
-            }
-        }
-        .sheet(isPresented: $showSheet) {
-            SWFractalCloudsControlsSheet(
-                skyColor: $skyColor,
-                cloudColor: $cloudColor,
-                warmTint: $warmTint,
-                warmth: $warmth,
-                speed: $speed,
-                zoom: $zoom,
-                driftX: $driftX,
-                driftY: $driftY,
-                warp: $warp,
-                coverage: $coverage
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-        }
-    }
-}
-
-// MARK: - Controls Sheet
-
-private struct SWFractalCloudsControlsSheet: View {
-    @Binding var skyColor: Color
-    @Binding var cloudColor: Color
-    @Binding var warmTint: Color
-    @Binding var warmth: Float
-    @Binding var speed: Float
-    @Binding var zoom: Float
-    @Binding var driftX: Float
-    @Binding var driftY: Float
-    @Binding var warp: Float
-    @Binding var coverage: Float
-
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Colors") {
-                    ColorPicker("Sky",        selection: $skyColor,   supportsOpacity: false)
-                    ColorPicker("Cloud",      selection: $cloudColor, supportsOpacity: false)
-                    ColorPicker("Warm Tint",  selection: $warmTint,   supportsOpacity: false)
-                }
-
-                Section("Shape") {
-                    SliderRow(label: "Zoom",     value: $zoom,     range: 0.5...10, step: 0.1)
-                    SliderRow(label: "Coverage", value: $coverage, range: -1...1,   step: 0.05)
-                    SliderRow(label: "Warp",     value: $warp,     range: 0...5,    step: 0.05)
-                    SliderRow(label: "Warmth",   value: $warmth,   range: 0...2,    step: 0.05)
-                }
-
-                Section("Motion") {
-                    SliderRow(label: "Speed",   value: $speed,  range: 0...3,        step: 0.05)
-                    SliderRow(label: "Drift X", value: $driftX, range: -0.5...0.5,   step: 0.01)
-                    SliderRow(label: "Drift Y", value: $driftY, range: -0.5...0.5,   step: 0.01)
-                }
-            }
-            .navigationTitle("Fractal Clouds")
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
-        }
-    }
-}
-
-private struct SliderRow: View {
-    let label: String
-    @Binding var value: Float
-    let range: ClosedRange<Float>
-    let step: Float
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(label)
-                Spacer()
-                Text(String(format: "%.2f", value))
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-            Slider(value: $value, in: range, step: step)
-        }
     }
 }
 

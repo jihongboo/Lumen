@@ -27,7 +27,7 @@ struct HomePageSwitcherOptionButton: View {
                 .foregroundStyle(isSelected ? .black : .white)
         }
         .tint(isSelected ? .white : .clear)
-        .buttonStyle(.glassProminent)
+        .lumenGlassProminentButtonStyle()
         .animation(.smooth, value: selection)
     }
 }

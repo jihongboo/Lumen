@@ -18,6 +18,9 @@ enum Background: String, CaseIterable, Identifiable {
     case starfield
     case animatedLoop
     case dots
+    case auroraVeil
+    case kaleidoscopeBloom
+    case silkVortex
     
     var title: LocalizedStringKey {
         switch self {
@@ -37,6 +40,12 @@ enum Background: String, CaseIterable, Identifiable {
             "Loop"
         case .dots:
             "Dots"
+        case .auroraVeil:
+            "Aurora"
+        case .kaleidoscopeBloom:
+            "Bloom"
+        case .silkVortex:
+            "Silk"
         }
     }
 }
@@ -125,6 +134,39 @@ struct LiquidGlassTimePage: View {
                     gridDensity: style.gridDensity,
                     horizon: style.horizon
                 )
+            case .auroraVeil:
+                let style = theme.auroraVeilStyle
+                SWAuroraVeil(
+                    base: style.base,
+                    ribbon1: style.ribbon1,
+                    ribbon2: style.ribbon2,
+                    glow: style.glow,
+                    speed: style.speed,
+                    scale: style.scale,
+                    intensity: style.intensity
+                )
+            case .kaleidoscopeBloom:
+                let style = theme.kaleidoscopeBloomStyle
+                SWKaleidoscopeBloom(
+                    background: style.background,
+                    petal1: style.petal1,
+                    petal2: style.petal2,
+                    highlight: style.highlight,
+                    speed: style.speed,
+                    petals: style.petals,
+                    bloom: style.bloom
+                )
+            case .silkVortex:
+                let style = theme.silkVortexStyle
+                SWSilkVortex(
+                    shadow: style.shadow,
+                    silk1: style.silk1,
+                    silk2: style.silk2,
+                    glint: style.glint,
+                    speed: style.speed,
+                    swirl: style.swirl,
+                    contrast: style.contrast
+                )
             }
         }
         .ignoresSafeArea()
@@ -197,6 +239,36 @@ private struct DotsThemeStyle {
     let brightness: Float
     let gridDensity: Float
     let horizon: Float
+}
+
+private struct AuroraVeilThemeStyle {
+    let base: Color
+    let ribbon1: Color
+    let ribbon2: Color
+    let glow: Color
+    let speed: Float
+    let scale: Float
+    let intensity: Float
+}
+
+private struct KaleidoscopeBloomThemeStyle {
+    let background: Color
+    let petal1: Color
+    let petal2: Color
+    let highlight: Color
+    let speed: Float
+    let petals: Float
+    let bloom: Float
+}
+
+private struct SilkVortexThemeStyle {
+    let shadow: Color
+    let silk1: Color
+    let silk2: Color
+    let glint: Color
+    let speed: Float
+    let swirl: Float
+    let contrast: Float
 }
 
 private extension Theme {
@@ -450,6 +522,141 @@ private extension Theme {
                 brightness: 1.08,
                 gridDensity: 0.95,
                 horizon: -0.2
+            )
+        }
+    }
+
+    var auroraVeilStyle: AuroraVeilThemeStyle {
+        switch self {
+        case .morning:
+            AuroraVeilThemeStyle(
+                base: Color(red: 0.07, green: 0.05, blue: 0.14),
+                ribbon1: Color(red: 1.0, green: 0.52, blue: 0.48),
+                ribbon2: Color(red: 0.66, green: 0.44, blue: 0.86),
+                glow: Color(red: 1.0, green: 0.78, blue: 0.58),
+                speed: 0.22,
+                scale: 1.02,
+                intensity: 0.92
+            )
+        case .sunnyNoon:
+            AuroraVeilThemeStyle(
+                base: Color(red: 0.02, green: 0.12, blue: 0.30),
+                ribbon1: Color(red: 0.22, green: 0.84, blue: 1.0),
+                ribbon2: Color(red: 1.0, green: 0.72, blue: 0.28),
+                glow: Color(red: 0.80, green: 0.96, blue: 1.0),
+                speed: 0.18,
+                scale: 0.96,
+                intensity: 0.82
+            )
+        case .rainy:
+            AuroraVeilThemeStyle(
+                base: Color(red: 0.02, green: 0.04, blue: 0.08),
+                ribbon1: Color(red: 0.32, green: 0.74, blue: 0.86),
+                ribbon2: Color(red: 0.40, green: 0.48, blue: 0.70),
+                glow: Color(red: 0.62, green: 0.88, blue: 0.96),
+                speed: 0.26,
+                scale: 1.08,
+                intensity: 0.78
+            )
+        case .night:
+            AuroraVeilThemeStyle(
+                base: Color(red: 0.0, green: 0.01, blue: 0.05),
+                ribbon1: Color(red: 0.16, green: 0.92, blue: 0.68),
+                ribbon2: Color(red: 0.54, green: 0.28, blue: 1.0),
+                glow: Color(red: 0.44, green: 0.86, blue: 1.0),
+                speed: 0.32,
+                scale: 1.0,
+                intensity: 1.08
+            )
+        }
+    }
+
+    var kaleidoscopeBloomStyle: KaleidoscopeBloomThemeStyle {
+        switch self {
+        case .morning:
+            KaleidoscopeBloomThemeStyle(
+                background: Color(red: 0.08, green: 0.04, blue: 0.10),
+                petal1: Color(red: 1.0, green: 0.42, blue: 0.42),
+                petal2: Color(red: 1.0, green: 0.68, blue: 0.36),
+                highlight: Color(red: 1.0, green: 0.86, blue: 0.72),
+                speed: 0.20,
+                petals: 7,
+                bloom: 0.92
+            )
+        case .sunnyNoon:
+            KaleidoscopeBloomThemeStyle(
+                background: Color(red: 0.02, green: 0.10, blue: 0.22),
+                petal1: Color(red: 0.12, green: 0.64, blue: 1.0),
+                petal2: Color(red: 0.96, green: 0.74, blue: 0.22),
+                highlight: Color(red: 0.92, green: 0.98, blue: 1.0),
+                speed: 0.18,
+                petals: 8,
+                bloom: 0.86
+            )
+        case .rainy:
+            KaleidoscopeBloomThemeStyle(
+                background: Color(red: 0.02, green: 0.03, blue: 0.07),
+                petal1: Color(red: 0.24, green: 0.52, blue: 0.66),
+                petal2: Color(red: 0.50, green: 0.78, blue: 0.84),
+                highlight: Color(red: 0.74, green: 0.90, blue: 0.96),
+                speed: 0.16,
+                petals: 9,
+                bloom: 0.76
+            )
+        case .night:
+            KaleidoscopeBloomThemeStyle(
+                background: Color(red: 0.02, green: 0.0, blue: 0.06),
+                petal1: Color(red: 0.62, green: 0.24, blue: 1.0),
+                petal2: Color(red: 0.12, green: 0.78, blue: 1.0),
+                highlight: Color(red: 0.94, green: 0.86, blue: 1.0),
+                speed: 0.22,
+                petals: 10,
+                bloom: 1.0
+            )
+        }
+    }
+
+    var silkVortexStyle: SilkVortexThemeStyle {
+        switch self {
+        case .morning:
+            SilkVortexThemeStyle(
+                shadow: Color(red: 0.07, green: 0.03, blue: 0.08),
+                silk1: Color(red: 0.92, green: 0.36, blue: 0.42),
+                silk2: Color(red: 0.96, green: 0.62, blue: 0.42),
+                glint: Color(red: 1.0, green: 0.82, blue: 0.72),
+                speed: 0.20,
+                swirl: 0.82,
+                contrast: 0.88
+            )
+        case .sunnyNoon:
+            SilkVortexThemeStyle(
+                shadow: Color(red: 0.02, green: 0.10, blue: 0.20),
+                silk1: Color(red: 0.10, green: 0.58, blue: 0.92),
+                silk2: Color(red: 0.94, green: 0.74, blue: 0.30),
+                glint: Color(red: 0.92, green: 0.98, blue: 1.0),
+                speed: 0.18,
+                swirl: 0.72,
+                contrast: 0.82
+            )
+        case .rainy:
+            SilkVortexThemeStyle(
+                shadow: Color(red: 0.01, green: 0.02, blue: 0.05),
+                silk1: Color(red: 0.16, green: 0.36, blue: 0.48),
+                silk2: Color(red: 0.36, green: 0.58, blue: 0.66),
+                glint: Color(red: 0.70, green: 0.88, blue: 0.94),
+                speed: 0.24,
+                swirl: 0.92,
+                contrast: 1.08
+            )
+        case .night:
+            SilkVortexThemeStyle(
+                shadow: Color(red: 0.0, green: 0.0, blue: 0.04),
+                silk1: Color(red: 0.16, green: 0.48, blue: 0.96),
+                silk2: Color(red: 0.48, green: 0.22, blue: 0.94),
+                glint: Color(red: 0.86, green: 0.92, blue: 1.0),
+                speed: 0.26,
+                swirl: 1.05,
+                contrast: 1.0
             )
         }
     }

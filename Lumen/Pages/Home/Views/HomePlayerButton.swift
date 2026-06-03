@@ -14,7 +14,7 @@ struct HomePlayerButton: View {
         Button(action: togglePlayback) {
             Image(systemName: ambientAudioPlayer.isPlaying ? "pause.fill" : "play.fill")
         }
-        .buttonStyle(.glass)
+        .lumenGlassButtonStyle()
         .accessibilityLabel(ambientAudioPlayer.isPlaying ? "Pause ambient sound" : "Play ambient sound")
     }
 

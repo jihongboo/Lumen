@@ -356,8 +356,6 @@ private struct SWAnimatedLoopControlled: View {
     @State private var angularAmount: Float
     @State private var angularSpeed: Float
 
-    @State private var showSheet = false
-
     init(initial: SWAnimatedLoop) {
         _style         = State(initialValue: initial.style)
         _shape         = State(initialValue: initial.shape)
@@ -415,43 +413,6 @@ private struct SWAnimatedLoopControlled: View {
         // whichever style is currently selected.
         makeRenderer()
             .ignoresSafeArea()
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showSheet = true
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
-                    }
-                    .accessibilityLabel("Animated Loop Controls")
-                }
-            }
-            .sheet(isPresented: $showSheet) {
-            SWAnimatedLoopControlsSheet(
-                style: $style,
-                shape: $shape,
-                petals: $petals,
-                color1: $color1,
-                color2: $color2,
-                color3: $color3,
-                background: $background,
-                speed: $speed,
-                lineWidth: $lineWidth,
-                lines: $lines,
-                spacing: $spacing,
-                channelOffset: $channelOffset,
-                patternMod: $patternMod,
-                rotation: $rotation,
-                scale: $scale,
-                centerX: $centerX,
-                centerY: $centerY,
-                angularLobes: $angularLobes,
-                angularAmount: $angularAmount,
-                angularSpeed: $angularSpeed,
-                applyDefaults: applyDefaults
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-        }
     }
 
     /// Loads `style`'s hand-tuned numeric defaults into the live state.
@@ -465,147 +426,6 @@ private struct SWAnimatedLoopControlled: View {
         spacing       = d.spacing
         channelOffset = d.channelOffset
         patternMod    = d.patternMod
-    }
-}
-
-// MARK: - Controls Sheet
-
-private struct SWAnimatedLoopControlsSheet: View {
-    @Binding var style: SWAnimatedLoopStyle
-    @Binding var shape: SWAnimatedLoopShape
-    @Binding var petals: Float
-    @Binding var color1: Color
-    @Binding var color2: Color
-    @Binding var color3: Color
-    @Binding var background: Color
-    @Binding var speed: Float
-    @Binding var lineWidth: Float
-    @Binding var lines: Float
-    @Binding var spacing: Float
-    @Binding var channelOffset: Float
-    @Binding var patternMod: Float
-    @Binding var rotation: Float
-    @Binding var scale: Float
-    @Binding var centerX: Float
-    @Binding var centerY: Float
-    @Binding var angularLobes: Float
-    @Binding var angularAmount: Float
-    @Binding var angularSpeed: Float
-
-    /// Called by the sheet when `style` changes, so the parent can replace
-    /// the numeric ring defaults to the new style's hand-tuned values.
-    let applyDefaults: (SWAnimatedLoopStyle) -> Void
-
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Style") {
-                    Picker("Style", selection: $style) {
-                        ForEach(SWAnimatedLoopStyle.allCases) { s in
-                            Text(s.displayName).tag(s)
-                        }
-                    }
-                }
-
-                // Shape sub-picker is only meaningful for the Shape style.
-                if style.supportsShape {
-                    Section("Shape") {
-                        Picker("Shape", selection: $shape) {
-                            ForEach(SWAnimatedLoopShape.allCases) { s in
-                                Text(s.displayName).tag(s)
-                            }
-                        }
-
-                        if shape == .star {
-                            SliderRow(label: "Petals", value: $petals, range: 3...12, step: 1)
-                        }
-                    }
-                }
-
-                Section("Colors") {
-                    ColorPicker("Channel 1",  selection: $color1,     supportsOpacity: false)
-                    ColorPicker("Channel 2",  selection: $color2,     supportsOpacity: false)
-                    ColorPicker("Channel 3",  selection: $color3,     supportsOpacity: false)
-                    ColorPicker("Background", selection: $background, supportsOpacity: false)
-                }
-
-                Section("Rings") {
-                    SliderRow(label: "Lines",          value: $lines,         range: 1...20,        step: 1)
-                    SliderRow(label: "Spacing",        value: $spacing,       range: 0.5...20,      step: 0.1)
-                    SliderRow(label: "Line Width",     value: $lineWidth,     range: 0.0001...0.02, step: 0.0001)
-                    SliderRow(label: "Channel Offset", value: $channelOffset, range: -0.5...0.5,    step: 0.005)
-                    SliderRow(label: "Pattern Mod",    value: $patternMod,    range: 0.01...2,      step: 0.01)
-                }
-
-                Section("Transform") {
-                    SliderRow(label: "Rotation", value: $rotation, range: -3.14...3.14, step: 0.05)
-                    SliderRow(label: "Scale",    value: $scale,    range: 0.2...5,      step: 0.05)
-                    SliderRow(label: "Center X", value: $centerX,  range: -1...1,       step: 0.05)
-                    SliderRow(label: "Center Y", value: $centerY,  range: -1...1,       step: 0.05)
-                }
-
-                Section("Motion") {
-                    SliderRow(label: "Speed", value: $speed, range: 0...1, step: 0.01)
-                }
-
-                // Angular controls only apply to the Neon style.
-                if style.supportsAngular {
-                    Section("Angular (Neon)") {
-                        SliderRow(label: "Lobes",  value: $angularLobes,  range: 1...12, step: 1)
-                        SliderRow(label: "Amount", value: $angularAmount, range: 0...0.5, step: 0.005)
-                        SliderRow(label: "Speed",  value: $angularSpeed,  range: 0...3, step: 0.05)
-                    }
-                }
-            }
-            .navigationTitle("Animated Loop")
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
-            // Style change → reload that style's hand-tuned numeric defaults
-            // so each style ships with the look its author designed.
-            .onChange(of: style) { _, newStyle in
-                applyDefaults(newStyle)
-            }
-        }
-    }
-}
-
-private struct SliderRow: View {
-    let label: String
-    @Binding var value: Float
-    let range: ClosedRange<Float>
-    let step: Float
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(label)
-                Spacer()
-                Text(formattedValue)
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-            Slider(value: $value, in: range, step: step)
-        }
-    }
-
-    /// Integer-stepped sliders render as whole numbers; sub-thousandth
-    /// steps render with four decimals; everything else gets two.
-    private var formattedValue: String {
-        if step >= 1 {
-            return "\(Int(value.rounded()))"
-        } else if step < 0.001 {
-            return String(format: "%.4f", value)
-        } else {
-            return String(format: "%.2f", value)
-        }
     }
 }
 

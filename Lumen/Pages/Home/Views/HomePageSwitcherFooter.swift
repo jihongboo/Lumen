@@ -21,7 +21,7 @@ struct HomePageSwitcherFooter: View {
                     }
                 }
             }
-
+            .lumenFocusSection()
 
             ScrollView(.horizontal) {
                 HStack {
@@ -36,6 +36,7 @@ struct HomePageSwitcherFooter: View {
                     }
                 }
             }
+            .lumenFocusSection()
         }
         .scrollIndicators(.hidden)
         .scrollClipDisabled()
@@ -71,7 +72,7 @@ private struct AmbientSoundSegmentButton: View {
                 .foregroundStyle(isSelected ? .black : .white)
         }
         .tint(isSelected ? .white : .clear)
-        .buttonStyle(.glassProminent)
+        .lumenGlassProminentButtonStyle()
         .accessibilityLabel(sound.title)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
